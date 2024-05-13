@@ -1,6 +1,6 @@
 using Flux, Images, Random, Plots, CUDA
 
-k = 64
+k = 320
 max_epochs = 10000
 img = load("./img/astronaut_inpainting.jpg")
 #img_noisy = img + 0.25*(rand(eltype(img), size(img)) .- RGB(0.5,0.5,0.5))
