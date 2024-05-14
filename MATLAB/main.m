@@ -2,6 +2,7 @@ clear all
 
 net = dlnetwork;
 num_layers=6;
+
 max_iter=1000;
 k=128;
 
@@ -42,11 +43,10 @@ clear tempNet Net;
 net = initialize(net);
 
 %% 
-
-
 options = trainingOptions("adam","Plots","training-progress",ExecutionEnvironment="multi-gpu", OutputNetwork="Last-iteration",MaxEpochs=max_iter);
 
 X = dlarray(unifrnd(0,1,size(img,1)/2^num_layers,size(img,2)/2^num_layers,k),"SSCB");
+
 
 
 
@@ -55,6 +55,6 @@ trained_net = trainnet(X, noisy_img_array,net,"mse",options);
 predicted = predict(trained_net, X);
 
 Y = extractdata(predicted);
-imshow(Y);
 
+imshow(Y);
 PSNRY = psnr(double(Y),img);
