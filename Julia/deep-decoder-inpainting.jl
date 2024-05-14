@@ -20,6 +20,13 @@ arr_img_noisy = convert(Array{Float32}, arr_img_noisy)
 arr_img_noisy = arr_img_noisy .* arr_mask |> gpu
 arr_mask = arr_mask |> gpu
 
+
+# Save the noisy image
+#= noisy_img = cpu(arr_img_noisy)
+noisy_img = colorview(RGB, permutedims(noisy_img[:,:,:,1],(3,1,2)))
+save("noisy_image.png", noisy_img)
+ =#
+
 data = rand(eltype(arr_img_noisy), Int(size(img,1)*(2^-6)), Int(size(img,2)*(2^-6)), k,1)
 
 # Define the model
