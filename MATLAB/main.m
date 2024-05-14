@@ -2,20 +2,19 @@ clear all
 
 net = dlnetwork;
 num_layers=6;
-max_iter=5000;
-k=320;
 
-img = double(imread('img/astronaut_inpainting.png'))/255;
+max_iter=1000;
+k=128;
 
-%noisy_img = img + normrnd(0,0.1,size(img));
-%PSNR = psnr(noisy_img, img);
+img = double(imread('img/astronaut.png'))/255;
 
-mask=mask_inpainting(img);
-save mask.mat mask
+noisy_img = img + normrnd(0,0.05,size(img));
+PSNR = psnr(noisy_img, img);
 
-%imshow(noisy_img);
 
-%noisy_img_array = dlarray(noisy_img, "SSCB");
+imshow(noisy_img);
+
+noisy_img_array = dlarray(noisy_img, "SSCB");
 
 %% Création du NN
 Net = [
@@ -44,21 +43,18 @@ clear tempNet Net;
 net = initialize(net);
 
 %% 
-
 options = trainingOptions("adam","Plots","training-progress",ExecutionEnvironment="multi-gpu", OutputNetwork="Last-iteration",MaxEpochs=max_iter);
 
 X = dlarray(unifrnd(0,1,size(img,1)/2^num_layers,size(img,2)/2^num_layers,k),"SSCB");
 
 
 
-[trained_net,info]= trainnet(X, img ,net,@loss_inp,options);
+
+trained_net = trainnet(X, noisy_img_array,net,"mse",options);
 
 predicted = predict(trained_net, X);
 
 Y = extractdata(predicted);
-figure;
+
 imshow(Y);
-
-imwrite(Y, "img\inpainting_test.png");
-
 PSNRY = psnr(double(Y),img);
