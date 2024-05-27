@@ -1,6 +1,6 @@
 using Flux, Images, Random, Plots, CUDA
 
-k = 320
+k = 160
 max_epochs = 10000
 img = load("./img/astronaut.jpg")
 #img_noisy = img + 0.25*(rand(eltype(img), size(img)) .- RGB(0.5,0.5,0.5))
@@ -72,6 +72,14 @@ for epoch in 1:max_epochs
     Flux.train!(loss, model, train_set, opt)
     if epoch % 10 == 0
         println("Epoch: $epoch")
+    end
+    if epoch % 1000 == 0
+        model_temp = cpu(model)
+        im_out = model_temp(data)
+        im_out = im_out[:,:,:,1]
+        im_out = permutedims(im_out, (3,1,2))
+        im_out = colorview(RGB, im_out)
+        save("inpainting-$k-$epoch.png", im_out)
     end
 end
 println("Time taken for k = $k : ", time()-t1)
